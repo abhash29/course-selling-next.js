@@ -1,5 +1,6 @@
+import mongoose, { mongo } from "mongoose";
+
 import dotenv from "dotenv";
-import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -8,15 +9,16 @@ if(!MONGO_URI){
     throw new Error("Mongodb string is not defined");
 }
 
+let cached  = (global as any).mongoose || {conn: null, promise: null};
 export const connectDB = async () => {
-    if (mongoose.connection.readyState >= 1) {
+    if (cached.conn) {
         console.log("Mongodb is already connected");
-        return;
+        return cached.conn;
     }
-    try{
-        await mongoose.connect(MONGO_URI);
+    if(!cached.promise){
+        cached.promise = mongoose.connect(MONGO_URI).then(() => console.log("Mongodb is connected now"))
     }
-    catch(err){
-        console.log(err);
-    }
+    cached.conn = await cached.promise;
+    (global as any).mongoose = cached;
+    return cached.conn;
 };

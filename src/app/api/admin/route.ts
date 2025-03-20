@@ -10,10 +10,10 @@ export async function GET() {
     return NextResponse.json({ message: "Backend is working" });
 }
 
-export async function handler(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest, res: NextResponse) {
     try {
         await connectDB();
-        const { email, password } = await req.json();
+        const { email, password } = req.body;
 
         const admin = await Admin.findOne({ email });
         if (admin) {
@@ -27,7 +27,6 @@ export async function handler(req: NextRequest, res: NextResponse) {
 
         return NextResponse.json({ message: "User created successfully", token });
     } catch (error) {
-        console.error("Error in admin registration:", error);
-        return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ message: "Internal Server Error", error}, { status: 500 });
     }
 }
