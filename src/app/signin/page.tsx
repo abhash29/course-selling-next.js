@@ -7,7 +7,7 @@ import axios from "axios";
 function page (){
     return <div>
         <SigninLayout onClick={async (email, password)=> {
-            const response = await axios.post("api/signup", {
+            const response = await axios.post("api/admin", {
                 email,
                 password
             });

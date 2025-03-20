@@ -13,7 +13,8 @@ export async function GET() {
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
         await connectDB();
-        const { email, password } = req.body;
+        const body = await req.json();
+        const { email, password } = body;
 
         const admin = await Admin.findOne({ email });
         if (admin) {
